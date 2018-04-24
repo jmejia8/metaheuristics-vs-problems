@@ -7,6 +7,8 @@ function problem1()
 
     D, f, g = getOptimizationProblem(precisionpts)
 
+    max_evals = 20000D
+    
     bounds =
         [ 0 60;
           0 60;
@@ -21,7 +23,7 @@ function problem1()
         ]'
 
     fobj(x) =  f(x), g(x)
-    return D, fobj, bounds
+    return D, fobj, bounds, max_evals
 end
 
 function problem2()
@@ -32,6 +34,8 @@ function problem2()
     θ2 = [π/6, π/4, π/3, 10π/24, π/2]
     D, f, g = getOptimizationProblem(precisionpts, X0, θ2)
 
+    max_evals = 60000
+    
     bounds =
         [ 0 60;
           0 60;
@@ -42,12 +46,14 @@ function problem2()
         ]'
 
     fobj(x) =  f(x), g(x)
-    return D, fobj, bounds
+    return D, fobj, bounds, max_evals
 end
 
 function problem3()
     D, f, g = getOptimizationProblem(PTS_PAIR_1, PTS_PAIR_2)
     precisionpts = PTS_PAIR_1
+
+    max_evals = 20000D
 
     bounds =
         [ 0 60;
@@ -63,31 +69,27 @@ function problem3()
         ]'
 
     fobj(x) =  f(x), g(x)
-    return D, fobj, bounds
+    return D, fobj, bounds, max_evals
 end
 
 function problemControl()
     D, fobj = getDynamicOptimizationProblem()
-    return D, fobj, [0.1ones(D) 50ones(D)]'
+    return D, fobj, [0.1ones(D) 50ones(D)]', 10000
 end
 
 function solverECA(Problem)
-    D, fobj, bounds = Problem()
+    D, fobj, bounds, max_evals = Problem()
 
     α_ = 1000.0
 
     if D == 15
         K = 3; N = 100; η_max = 2.0
-        max_evals = 20000D
     elseif D == 5
         K = 7; N = K*D; η_max = 2
-        max_evals = 60000
     elseif D == 19
         K = 7; N = 200; η_max = 3.0
-        max_evals = 20000D
     else
         K = 3; N = 10; η_max = 4.0
-        max_evals = 10000
         α_ = 100.0
     end
 
@@ -110,32 +112,27 @@ end
 
     # jso, CMA y CGSA. 
 function solverJSO(Problem)
-    D, fobj, bounds = Problem()
-
-    max_evals = 20000D
-    if D == 3
-        max_evals = 10000
-    end
+    D, fobj, bounds, max_evals = Problem()
 
     return jso(fobj, D; max_evals=max_evals, limits=bounds)
 end
 
 function solverCMA(Problem)
-    D, fobj, bounds = Problem()
+    D, fobj, bounds, max_evals = Problem()
     
-    return CMAES_AEP(fobj, D; limits=bounds)
+    return CMAES_AEP(fobj, D;max_evals=max_evals, limits=bounds)
 end
 
 function solverCGSA(Problem)
-    D, fobj, bounds = Problem()
+    D, fobj, bounds, max_evals = Problem()
     
-    return CGSA(fobj, D; limits=bounds)
+    return CGSA(fobj, D; max_evals=max_evals, limits=bounds)
 end
 
 function test()
     problemSet = [problem1, problem2, problem3]
     
-    solve(problemSet, solverECA)
+    solve(problemSet, solverECA)  
     
     solve(problemSet, solverJSO)
 
