@@ -5,15 +5,15 @@ Metaheuristics solve some engineering problems
 ## Requirements
 
 - [Julia 0.6](https://julialang.org/)
-- [Metaheuristics](https://raw.githubusercontent.com/jmejia8/Metaheuristics.jl) module:
+- [Metaheuristics](https://github.com/jmejia8/Metaheuristics.jl) module:
 ```
 Pkg.clone("git@github.com:jmejia8/Metaheuristics.jl.git") 
 ```
-- [Mechanisms](https://raw.githubusercontent.com/jmejia8/Mechanisms.jl) module:
+- [Mechanisms](https://github.com/jmejia8/Mechanisms.jl) module:
 ```
 Pkg.clone("git@github.com:jmejia8/Mechanisms.jl.git") 
 ```
-- [God](https://raw.githubusercontent.com/jmejia8/God.jl) module:
+- [God](https://github.com/jmejia8/God.jl) module:
 ```
 Pkg.clone("git@github.com:jmejia8/God.jl.git") 
 ```
