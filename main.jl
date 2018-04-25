@@ -2,6 +2,8 @@ using Metaheuristics
 using Mechanisms
 using God
 
+current_run = 1
+
 function problem1()
     precisionpts = PTS_VERTICAL_LINE
 
@@ -23,7 +25,7 @@ function problem1()
         ]'
 
     fobj(x) =  f(x), g(x)
-    return D, fobj, bounds, max_evals
+    return D, fobj, bounds, max_evals, 1
 end
 
 function problem2()
@@ -46,7 +48,7 @@ function problem2()
         ]'
 
     fobj(x) =  f(x), g(x)
-    return D, fobj, bounds, max_evals
+    return D, fobj, bounds, max_evals,2
 end
 
 function problem3()
@@ -69,12 +71,12 @@ function problem3()
         ]'
 
     fobj(x) =  f(x), g(x)
-    return D, fobj, bounds, max_evals
+    return D, fobj, bounds, max_evals,3
 end
 
 function problemControl()
     D, fobj = getDynamicOptimizationProblem()
-    return D, fobj, [0.1ones(D) 50ones(D)]', 10000
+    return D, fobj, [0.1ones(D) 50ones(D)]', 10000,4
 end
 
 function solverECA(Problem)
@@ -112,21 +114,27 @@ end
 
     # jso, CMA y CGSA. 
 function solverJSO(Problem)
-    D, fobj, bounds, max_evals = Problem()
+    D, fobj, bounds, max_evals, pname = Problem()
 
-    return jso(fobj, D; max_evals=max_evals, limits=bounds)
+    return jso(fobj, D; saveConvergence="output/jso_$(current_run)_$(pname).csv",
+                        max_evals = max_evals,
+                        limits    = bounds)
 end
 
 function solverCMA(Problem)
-    D, fobj, bounds, max_evals = Problem()
+    D, fobj, bounds, max_evals, pname = Problem()
     
-    return CMAES_AEP(fobj, D;max_evals=max_evals, limits=bounds)
+    return CMAES_AEP(fobj, D; saveConvergence="output/cma_$(current_run)_$(pname).csv",
+                              max_evals = max_evals,
+                              limits    = bounds)
 end
 
 function solverCGSA(Problem)
-    D, fobj, bounds, max_evals = Problem()
+    D, fobj, bounds, max_evals, pname = Problem()
     
-    return CGSA(fobj, D; max_evals=max_evals, limits=bounds)
+    return CGSA(fobj, D; saveConvergence = "output/cgsa_$(current_run)_$(pname).csv",
+                         max_evals = max_evals,
+                         limits    = bounds)
 end
 
 function test()
@@ -141,4 +149,26 @@ function test()
     solve(problemSet, solverCMA)
 end
 
-test()
+function main()
+    NRUNS = 31
+    
+    problemSet = [problem1, problem2, problem3, problemControl]
+    solverSet = [solverJSO, solverCMA, solverCGSA]
+
+    for nrun = 1:NRUNS
+        println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        println(" run:  \t ", nrun)
+        println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        
+        # get solutions
+        sols = solve(problemSet, solverSet)
+        
+        # save results
+        writecsv("output/run_$current_run", sols)
+        
+        # update run id
+        global current_run = nrun
+    end
+end
+
+main()
