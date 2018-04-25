@@ -155,7 +155,10 @@ function main()
     problemSet = [problem1, problem2, problem3, problemControl]
     solverSet = [solverJSO, solverCMA, solverCGSA]
 
-    for nrun = 1:NRUNS
+    for nrun = 31:NRUNS
+        # update run id
+        global current_run = nrun
+
         println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         println(" run:  \t ", nrun)
         println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -166,9 +169,6 @@ function main()
         # save results
         writecsv("output/run_$current_run", sols)
         
-        # update run id
-        global current_run = nrun
     end
 end
 
-main()
