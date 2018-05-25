@@ -49,7 +49,7 @@ function solverECA(Problem)
 
     x, f = eca(fobj, D; limits = bounds,
                         max_evals = max_evals,
-                        saveConvergence = "output/eca_$(D)_$(current_run)_$(pname).csv",
+                        saveConvergence = "output/eca_$(D)_run$(current_run)_f$(pname).csv",
                         showResults=false
         )
 
@@ -66,7 +66,7 @@ end
 function solverJSO(Problem)
     D, fobj, bounds, max_evals, pname = Problem()
 
-    return jso(fobj, D; saveConvergence="output/jso_$(D)_$(current_run)_$(pname).csv",
+    return jso(fobj, D; saveConvergence="output/jso_$(D)_run$(current_run)_f$(pname).csv",
                         max_evals = max_evals,
                         limits    = bounds)
 end
@@ -74,7 +74,7 @@ end
 function solverCMA(Problem)
     D, fobj, bounds, max_evals, pname = Problem()
     
-    return CMAES_AEP(fobj, D; saveConvergence="output/cma_$(D)_$(current_run)_$(pname).csv",
+    return CMAES_AEP(fobj, D; saveConvergence="output/cma_$(D)_run$(current_run)_f$(pname).csv",
                               max_evals = max_evals,
                               limits    = bounds)
 end
@@ -82,7 +82,7 @@ end
 function solverCGSA(Problem)
     D, fobj, bounds, max_evals, pname = Problem()
     
-    return CGSA(fobj, D; saveConvergence = "output/cgsa_$(D)_$(current_run)_$(pname).csv",
+    return CGSA(fobj, D; saveConvergence = "output/cgsa_$(D)_run$(current_run)_f$(pname).csv",
                          max_evals = max_evals,
                          limits    = bounds)
 end

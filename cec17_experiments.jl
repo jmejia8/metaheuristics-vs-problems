@@ -2,17 +2,25 @@ using Metaheuristics, God
 
 include("problems.jl")
 include("solvers.jl")
+include("tools.jl")
 
 current_run = 1
 
 function cec17_experiments()
     NRUNS = 31
     NFUNS = 30
-    
+
+    SOLVER_NAME = "eca"
+    solver = nothing
+
     solverSet = [solverECA, solverJSO, solverCMA, solverCGSA]
     D = 10
 
     results = zeros(NFUNS, NRUNS)
+
+    if SOLVER_NAME == "eca"
+        solver = solverECA
+    end
 
     for fnum = 1:NFUNS
         for nrun = 1:NRUNS
@@ -23,7 +31,7 @@ function cec17_experiments()
             problem() = problemsCEC17(D, fnum)
 
             # get solutions
-            fx = solve(problem, solverECA)
+            fx = solve(problem, solver)
 
             results[fnum, nrun] = fx
 
@@ -36,7 +44,7 @@ function cec17_experiments()
         println("")
         printSummary(stats)
         # save results
-        writecsv("output/summary_fun$(fnum)_$(current_run).csv", stats)
+        writecsv("output/summary_$(SOLVER_NAME)_fun$(fnum)_$(current_run).csv", results[fnum:fnum, :])
         println("------------------------------------------")
     end
     
@@ -45,8 +53,8 @@ function cec17_experiments()
     stats_all = statitistic(results)
 
     printSummary(stats_all)
-    writecsv("summary_all.csv", stats_all)
-    writecsv("summary_fx_all.csv", results)
+    writecsv("summary/$(SOLVER_NAME)_$(D)_stats.csv", stats_all)
+    writecsv("summary/$(SOLVER_NAME)_$(D)_runs_fx.csv", results)
     
     println("------------------------------------------")
     println("Todo terminó bien.")
