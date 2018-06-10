@@ -1,1 +1,6 @@
 output/
+summary/
+old/
+*.csv
+*.sublime-project
+*.sublime-workspace 
