@@ -49,7 +49,7 @@ function solverECA(Problem)
 
     x, f = eca(fobj, D; limits = bounds,
                         max_evals = max_evals,
-                        saveConvergence = "output/eca_$(D)_run$(current_run)_f$(pname).csv",
+                        saveConvergence = "output/eca/eca_$(D)_run$(current_run)_f$(pname).csv",
                         showResults=false
         )
 
@@ -66,23 +66,44 @@ end
 function solverJSO(Problem)
     D, fobj, bounds, max_evals, pname = Problem()
 
-    return jso(fobj, D; saveConvergence="output/jso_$(D)_run$(current_run)_f$(pname).csv",
+    x, f =  jso(fobj, D; saveConvergence="output/jso/jso_$(D)_run$(current_run)_f$(pname).csv",
                         max_evals = max_evals,
                         limits    = bounds)
+    f = abs(f - 100.0pname)
+
+    if f < TOL
+        return 0.0
+    end
+
+    return f
 end
 
 function solverCMA(Problem)
     D, fobj, bounds, max_evals, pname = Problem()
     
-    return CMAES_AEP(fobj, D; saveConvergence="output/cma_$(D)_run$(current_run)_f$(pname).csv",
+    x, f =  CMAES_AEP(fobj, D; saveConvergence="output/CMA/cma_$(D)_run$(current_run)_f$(pname).csv",
                               max_evals = max_evals,
                               limits    = bounds)
+    f = abs(f - 100.0pname)
+
+    if f < TOL
+        return 0.0
+    end
+
+    return f
 end
 
 function solverCGSA(Problem)
     D, fobj, bounds, max_evals, pname = Problem()
     
-    return CGSA(fobj, D; saveConvergence = "output/cgsa_$(D)_run$(current_run)_f$(pname).csv",
+    x, f =  CGSA(fobj, D; saveConvergence = "output/CGSA/cgsa_$(D)_run$(current_run)_f$(pname).csv",
                          max_evals = max_evals,
                          limits    = bounds)
+    f = abs(f - 100.0pname)
+
+    if f < TOL
+        return 0.0
+    end
+
+    return f
 end

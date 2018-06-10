@@ -6,23 +6,32 @@ include("tools.jl")
 
 current_run = 1
 
-function cec17_experiments()
+function cec17_experiments(a=1, b=30)
+    D = 30
+    SOLVER_NAME = "CGSA"
+
     NRUNS = 31
     NFUNS = 30
-
-    SOLVER_NAME = "eca"
     solver = nothing
 
     solverSet = [solverECA, solverJSO, solverCMA, solverCGSA]
-    D = 10
 
     results = zeros(NFUNS, NRUNS)
 
     if SOLVER_NAME == "eca"
         solver = solverECA
+    elseif SOLVER_NAME == "jso"
+        solver = solverJSO
+    elseif SOLVER_NAME == "CMA"
+        solver = solverCMA
+    elseif SOLVER_NAME == "CGSA"
+        solver = solverCGSA
     end
 
-    for fnum = 1:NFUNS
+    !isdir("output/$SOLVER_NAME") && mkdir("output/$SOLVER_NAME")
+    !isdir("summary/$SOLVER_NAME") && mkdir("summary/$SOLVER_NAME")
+
+    for fnum = a:b
         for nrun = 1:NRUNS
             # update run id
             global current_run = nrun
@@ -44,7 +53,7 @@ function cec17_experiments()
         println("")
         printSummary(stats)
         # save results
-        writecsv("output/summary_$(SOLVER_NAME)_fun$(fnum)_$(current_run).csv", results[fnum:fnum, :])
+        writecsv("output/$(SOLVER_NAME)/summary_$(SOLVER_NAME)_fun$(fnum)_$(current_run).csv", results[fnum:fnum, :])
         println("------------------------------------------")
     end
     
@@ -53,8 +62,8 @@ function cec17_experiments()
     stats_all = statitistic(results)
 
     printSummary(stats_all)
-    writecsv("summary/$(SOLVER_NAME)_$(D)_stats.csv", stats_all)
-    writecsv("summary/$(SOLVER_NAME)_$(D)_runs_fx.csv", results)
+    writecsv("summary/$(SOLVER_NAME)/$(SOLVER_NAME)_$(D)_stats.csv", stats_all)
+    writecsv("summary/$(SOLVER_NAME)/$(SOLVER_NAME)_$(D)_runs_fx.csv", results)
     
     println("------------------------------------------")
     println("Todo terminó bien.")
@@ -62,4 +71,4 @@ function cec17_experiments()
 
 end
 
-cec17_experiments()
+# cec17_experiments()
